@@ -63,6 +63,9 @@ create table Consulta (
 	foreign key (medicaID) references medica(EmpregadosID)	
 );
 
+alter table consulta
+	add column data date not null;
+
 create table receita (
 	consultaID int not null,
 	pacientesID int not null,
@@ -94,8 +97,56 @@ insert into quartos (ID, numero, consultorioID) values
 	(4, 04, 1),
 	(5, 05, 1);
 
+insert into quartos (ID, numero, consultorioID) values
+	(6, 06, 1),
+	(7, 07, 1),
+	(8, 08, 1),
+	(9, 09, 1),
+	(10, 10, 1),
+	(11, 11, 1),
+	(12, 12, 1),
+	(13, 13, 1),
+	(14, 14, 1),
+	(15, 15, 1),
+	(16, 16, 1),
+	(17, 17, 1),
+	(18, 18, 1),
+	(19, 19, 1),
+	(20, 21, 1),
+	(21, 22, 1),
+	(22, 23, 1),
+	(23, 24, 1),
+	(24, 24, 1),
+	(25, 25, 1),
+	(26, 26, 1);
 
 
+insert into lotacao (enfermeiraID, quartosID) values
+	(1, 1),
+	(1, 2),
+	(1, 3),
+	(2, 4),
+	(2, 5);
+
+insert into pacientes (ID, Nome, Cpf, Restricoes , quartosID) values
+	(1, 'arthur balejo', '12312312312', null, 1),
+	(2, 'gabriel cruz', '32132132132', 'alergia ozempic', 2),
+	(3, 'isabela costa', '21321321321', null, 3),
+	(4, 'eduardo zitske', '23123123123', 'alergia coach', 4);
+
+insert into consulta (ID, pacientesID, medicaID, data) values
+	(1, 1, 3, current_date),
+	(2, 2, 3, current_date),
+	(3, 3, 3, current_date),
+	(4, 4, 3, current_date);
+
+insert into receita (consultaID, pacientesID, medicaID, medicamento) values
+	(1, 1, 3, 'silencio'),
+	(2, 2, 3, 'tirzepatida');
+
+select * from receita natural join pacientes p where receita.pacientesID = ID
+	
+	
 
 
 
