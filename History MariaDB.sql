@@ -16,6 +16,13 @@ create table Medica (
 	especialidade varchar(100) not null
 );
 
+alter table Medica
+modify column crm VARCHAR(100) not null;
+
+alter table enfermeira 
+modify column coren VARCHAR(100) not null;
+
+
 create table consultorio (
 	ID int primary key,
 	cnpj varchar(100) unique
@@ -64,6 +71,29 @@ create table receita (
 	primary key (consultaID, pacientesID, medicaID),
 	foreign key (consultaID, pacientesID, medicaID) references Consulta(ID, pacientesID, medicaID)
 );
+
+insert into empregados (ID, Nome, Cpf, Tipo) values
+	(1, 'lucinda silva', '11111111111', 'enfermeira'),
+	(2, 'diamantina cruz', '22222222222', 'enfermeira'),
+	(3, 'lagaia correia', '33333333333', 'medica');
+
+insert into enfermeira (EmpregadosID, coren) values 
+	(1, '123456 RS'),
+	(2, '654321 SP');
+
+insert into medica (EmpregadosID, crm, especialidade) values
+	(3, 'CRM/RS 123456', 'Clinico Geral');
+
+insert into consultorio (ID, cnpj) values
+	(1, '12.123.123/0001-12');
+
+insert into quartos (ID, numero, consultorioID) values
+	(1, 01, 1),
+	(2, 02, 1),
+	(3, 03, 1),
+	(4, 04, 1),
+	(5, 05, 1);
+
 
 
 
