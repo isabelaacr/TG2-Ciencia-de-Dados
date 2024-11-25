@@ -1,4 +1,4 @@
-CREATE TABLE Empregados (
+create table Empregados (
     ID INT PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
     Cpf VARCHAR(100) UNIQUE,
@@ -39,13 +39,33 @@ create table Pacientes(
     foreign key (quartosID) references Quartos(ID)
 );
 
-CREATE TABLE Lotacao (
+create table Lotacao (
     enfermeiraID INT NOT NULL,
     quartosID INT NOT NULL,
     PRIMARY KEY (enfermeiraID, quartosID),
     FOREIGN KEY (enfermeiraID) REFERENCES enfermeira(empregadosID),
     FOREIGN KEY (quartosID) REFERENCES quartos(ID)
 );
+
+create table Consulta (
+	ID int not null,
+	pacientesID int not null,
+	medicaID int not null,
+	primary key (ID, pacientesID, medicaID),
+	foreign key (pacientesID) references pacientes(ID),
+	foreign key (medicaID) references medica(EmpregadosID)	
+);
+
+create table receita (
+	consultaID int not null,
+	pacientesID int not null,
+	medicaID int not null,
+	medicamento varchar(100),
+	primary key (consultaID, pacientesID, medicaID),
+	foreign key (consultaID, pacientesID, medicaID) references Consulta(ID, pacientesID, medicaID)
+);
+
+
 
 
 
