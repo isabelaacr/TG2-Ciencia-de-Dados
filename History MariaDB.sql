@@ -28,6 +28,24 @@ create table Quartos (
 	foreign key (consultorioID) references consultorio(ID)
 );
 
+use simpleclinic;
+
+create table Pacientes(
+	ID int primary key,
+	Nome VARCHAR(100) NOT NULL,
+    Cpf VARCHAR(100) UNIQUE,
+    Restricoes VARCHAR(100),
+    quartosID int,
+    foreign key (quartosID) references Quartos(ID)
+);
+
+CREATE TABLE Lotacao (
+    enfermeiraID INT NOT NULL,
+    quartosID INT NOT NULL,
+    PRIMARY KEY (enfermeiraID, quartosID),
+    FOREIGN KEY (enfermeiraID) REFERENCES enfermeira(empregadosID),
+    FOREIGN KEY (quartosID) REFERENCES quartos(ID)
+);
 
 
 
