@@ -1,0 +1,4 @@
+clinicaBackendEnv/
+__pycache__/
+*.pyc
+*.pyo

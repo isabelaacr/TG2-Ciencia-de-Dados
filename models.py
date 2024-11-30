@@ -1,0 +1,1 @@
+#onde configuro as tabelas do banco de dados
