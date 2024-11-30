@@ -2,10 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import mariadb  # Usando o conector mariadb
 
 app = Flask(__name__, template_folder='./templates')
-@app.route('/') 
-def home(): 
-    return render_template('index.html')
-                                            
+   
 # Função para obter a conexão com o MariaDB
 def get_db_connection():
     try:
