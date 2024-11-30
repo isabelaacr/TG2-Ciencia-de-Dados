@@ -9,8 +9,8 @@ def get_db_connection():
         # Conectando ao MariaDB
         conn = mariadb.connect(
             host='localhost',       # Endereço do servidor
-            user='root',            # Usuário do banco
-            password='sua_senha',   # Senha do banco
+            user='root',            # Usuário 
+            password='sua_senha',   # Senha 
             database='simpleclinic'  # Nome do banco de dados
         )
         return conn
