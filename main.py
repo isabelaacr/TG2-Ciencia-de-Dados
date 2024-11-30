@@ -13,7 +13,7 @@ def get_db_connection():
         conn = mariadb.connect(
             host='localhost',       # Endereço do servidor
             user='root',            # Usuário do banco
-            password='sua_senha',   # Senha do banco
+            password='root',   # Senha do banco
             database='simpleclinic'  # Nome do banco de dados
         )
         return conn
@@ -38,13 +38,15 @@ def get_pacientes():
     return jsonify(pacientes)
 
 # Rota para inserir um paciente
-@app.route('/inserir_paciente', methods=['POST'])
+@app.route('/paciente', methods=['POST'])
 def insert_paciente():
     data = request.get_json()
     conn = get_db_connection()
     if conn is None:
         return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
     
+    print('data', data)
+
     cursor = conn.cursor()
     cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (?, ?, ?, ?, ?)",
                    (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID']))
