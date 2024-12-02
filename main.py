@@ -43,7 +43,7 @@ def insert_paciente():
         return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
     
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (?, ?, ?, ?, ?)",
+    cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES  (%s, %s, %s, %s, %s)",
                    (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID']))
     conn.commit()
     cursor.close()
