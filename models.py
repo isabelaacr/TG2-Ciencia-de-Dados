@@ -37,7 +37,7 @@ def insert_paciente(data):
     
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (%s, %s, %s, %s, %s)",
         (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID'])
     )
     conn.commit()
