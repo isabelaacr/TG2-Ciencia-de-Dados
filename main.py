@@ -12,7 +12,7 @@ def get_db_connection():
         conn = mariadb.connect(
             host='localhost',       # Endereço do servidor
             user='root',            # Usuário do banco
-            password='sua_senha',   # Senha do banco
+            password='root',   # Senha do banco
             database='simpleclinic'  # Nome do banco de dados
         )
         return conn
