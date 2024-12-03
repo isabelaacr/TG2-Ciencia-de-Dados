@@ -12,7 +12,7 @@ def get_db_connection():
         )
         return conn
     except mariadb.Error as e:
-        print(f"Error connecting to database: {e}")
+        print(f"Erro ao conectar ao banco de dados: {e}")
         return None
 
 def init_routes(app):
@@ -24,7 +24,7 @@ def init_routes(app):
     def get_pacientes():
         conn = get_db_connection()
         if conn is None:
-            return jsonify({"message": "Database connection error!"}), 500
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
         
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM pacientes")
@@ -49,11 +49,11 @@ def init_routes(app):
         data = request.get_json()
 
         if not all(key in data for key in ['ID', 'Nome', 'Cpf', 'Restricoes', 'quartosID']):
-            return jsonify({"message": "All fields are required!"}), 400
+            return jsonify({"message": "Falta dados de entrada!"}), 400
         
         conn = get_db_connection()
         if conn is None:
-            return jsonify({"message": "Database connection error!"}), 500
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
         
         cursor = conn.cursor()
         cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (%s, %s, %s, %s, %s)",
@@ -62,4 +62,4 @@ def init_routes(app):
         cursor.close()
         conn.close()
         
-        return jsonify({"message": "Patient inserted successfully!"}), 201
+        return jsonify({"message": "Paciente inserido com sucesso!"}), 201
