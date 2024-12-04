@@ -63,3 +63,65 @@ def init_routes(app):
         conn.close()
         
         return jsonify({"message": "Paciente inserido com sucesso!"}), 201
+    
+    @app.route('/consultorios', methods=['GET'])
+    def get_consultorios():
+    
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM consultorio")
+        consultorios = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        consultorios_list = [
+            { "ID"   : consultorio[0],
+              "CNPJ" : consultorio[1]}
+            for consultorio in consultorios]
+    
+        return jsonify(consultorios_list)
+    
+    @app.route('/receitas', methods=['GET'])
+    def get_receitas():
+    
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM receita")
+        receitas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        receitas_list = [
+            { "receitaID"   : receitas[0],
+              "medicamento" : receitas[1]}
+            for receita in receitas]
+    
+        return jsonify(receitas_list)
+    
+    @app.route('/empregados', methods=['GET'])
+    def get_empregados():
+    
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM empregados")
+        empregados = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        empregados_list = [
+            { "empregadoID" : empregado[0],
+              "nome"        : empregado[1],
+              "CPF"         : empregado[2],
+              "tipo"        : empregado[3]}
+            for empregado in empregados]
+    
+        return jsonify(empregados_list)
