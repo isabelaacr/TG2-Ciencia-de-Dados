@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify
 import mariadb
 
-# Function to get DB connection
+# Conexão com MariaDB
 def get_db_connection():
     try:
         conn = mariadb.connect(
