@@ -1,59 +1,127 @@
-from flask import Flask, render_template, jsonify, request
+from flask import render_template, request, jsonify
 import mariadb
 
-app = Flask(__name__)
-
-from flask import render_template, request, jsonify
-import mariadb  # Conector MariaDB
-
-# Função para obter a conexão com o MariaDB
+# Conexão com MariaDB
 def get_db_connection():
     try:
         conn = mariadb.connect(
             host='localhost',
-            user='root',            
-            password='sua_senha',   
-            database='simpleclinic' 
+            user='root',
+            password='root',
+            database='simpleclinic'
         )
         return conn
     except mariadb.Error as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
         return None
 
-# Rota para renderizar a homepage
-@app.route('/')
-def homepage():
-    return render_template('index.html')  
+def init_routes(app):
+    @app.route('/') 
+    def home(): 
+        return render_template('index.html')
 
-# Consultar pacientes no banco de dados
-@app.route('/pacientes', methods=['GET'])
-def get_pacientes():
-    conn = get_db_connection()
-    if conn is None:
-        return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
-    
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM pacientes")
-    pacientes = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    
-    # Retorna os pacientes como JSON (ou pode retornar para um template HTML)
-    return jsonify(pacientes)
+    @app.route('/pacientes', methods=['GET'])
+    def get_pacientes():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM pacientes")
+        pacientes = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        pacientes_list = []
+        for paciente in pacientes:
+            pacientes_list.append({
+                "ID": paciente[0],
+                "Nome": paciente[1],
+                "Cpf": paciente[2],
+                "Restricoes": paciente[3],
+                "quartosID": paciente[4]
+            })
+        
+        return jsonify(pacientes_list)
 
-# Inserir um novo paciente
-@app.route('/inserir_paciente', methods=['POST'])
-def insert_paciente():
-    data = request.get_json()
-    conn = get_db_connection()
-    if conn is None:
-        return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    @app.route('/inserir_paciente', methods=['POST'])
+    def insert_paciente():
+        data = request.get_json()
+
+        if not all(key in data for key in ['ID', 'Nome', 'Cpf', 'Restricoes', 'quartosID']):
+            return jsonify({"message": "Falta dados de entrada!"}), 400
+        
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (%s, %s, %s, %s, %s)",
+                       (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID']))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({"message": "Paciente inserido com sucesso!"}), 201
     
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (?, ?, ?, ?, ?)",
-                   (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID']))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    @app.route('/consultorios', methods=['GET'])
+    def get_consultorios():
     
-    return jsonify({"message": "Paciente inserido com sucesso!"}), 201
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM consultorio")
+        consultorios = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        consultorios_list = [
+            { "ID"   : consultorio[0],
+              "CNPJ" : consultorio[1]}
+            for consultorio in consultorios]
+    
+        return jsonify(consultorios_list)
+    
+    @app.route('/receitas', methods=['GET'])
+    def get_receitas():
+    
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM receita")
+        receitas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        receitas_list = [
+            { "receitaID"   : receitas[0],
+              "medicamento" : receitas[1]}
+            for receita in receitas]
+    
+        return jsonify(receitas_list)
+    
+    @app.route('/empregados', methods=['GET'])
+    def get_empregados():
+    
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM empregados")
+        empregados = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        empregados_list = [
+            { "empregadoID" : empregado[0],
+              "nome"        : empregado[1],
+              "CPF"         : empregado[2],
+              "tipo"        : empregado[3]}
+            for empregado in empregados]
+    
+        return jsonify(empregados_list)

@@ -131,7 +131,7 @@ insert into lotacao (enfermeiraID, quartosID) values
 insert into pacientes (ID, Nome, Cpf, Restricoes , quartosID) values
 	(1, 'arthur balejo', '12312312312', null, 1),
 	(2, 'gabriel cruz', '32132132132', 'alergia ozempic', 2),
-	(3, 'isabela costa', '21321321321', null, 3),
+	(3, 'isabela acosta', '21321321321', null, 3),
 	(4, 'eduardo zitske', '23123123123', 'alergia coach', 4);
 
 insert into consulta (ID, pacientesID, medicaID, data) values
