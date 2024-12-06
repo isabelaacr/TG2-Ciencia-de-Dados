@@ -1,7 +1,6 @@
 from flask import render_template, request, jsonify
 import mariadb
 
-# Conexão com MariaDB
 def get_db_connection():
     try:
         conn = mariadb.connect(
@@ -22,7 +21,7 @@ def init_routes(app):
 
     @app.route('/pacientes', methods=['GET'])
     def get_pacientes():
-        conn = get_db_connection()
+        conn = get_db_connection()  
         if conn is None:
             return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
         
@@ -51,7 +50,7 @@ def init_routes(app):
         if not all(key in data for key in ['ID', 'Nome', 'Cpf', 'Restricoes', 'quartosID']):
             return jsonify({"message": "Falta dados de entrada!"}), 400
         
-        conn = get_db_connection()
+        conn = get_db_connection()  
         if conn is None:
             return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
         
@@ -63,7 +62,24 @@ def init_routes(app):
         conn.close()
         
         return jsonify({"message": "Paciente inserido com sucesso!"}), 201
-    
+
+    @app.route('/count_pacientes', methods=['GET'])
+    def count_pacientes():
+        conn = get_db_connection()  
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM pacientes") 
+        count = cursor.fetchone()[0]  
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            "total_pacientes": count  
+        })
+
+
     @app.route('/consultorios', methods=['GET'])
     def get_consultorios():
     
@@ -103,6 +119,7 @@ def init_routes(app):
             for receita in receitas]
     
         return jsonify(receitas_list)
+    
     
     @app.route('/empregados', methods=['GET'])
     def get_empregados():
