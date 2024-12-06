@@ -79,6 +79,25 @@ def init_routes(app):
             "total_pacientes": count  
         })
 
+    @app.route('/count_pacientes_por_quarto', methods=['GET'])
+    def count_pacientes_por_quarto():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT quartosID, COUNT(*) 
+            FROM pacientes 
+            GROUP BY quartosID
+        """)
+        dados = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        lista_dados = [{"quartoID": dado[0], "total_pacientes": dado[1]} for dado in dados]
+        return jsonify(lista_dados)
+
 
     @app.route('/consultorios', methods=['GET'])
     def get_consultorios():
@@ -100,6 +119,8 @@ def init_routes(app):
     
         return jsonify(consultorios_list)
     
+ 
+
     @app.route('/receitas', methods=['GET'])
     def get_receitas():
     
