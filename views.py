@@ -1,19 +1,7 @@
 from flask import render_template, request, jsonify
-from models import get_all_pacientes, insert_paciente
+from models import *
+from db import get_db_connection
 import mariadb
-
-def get_db_connection():
-    try:
-        conn = mariadb.connect(
-            host='localhost',
-            user='root',
-            password='root',
-            database='simpleclinic'
-        )
-        return conn
-    except mariadb.Error as e:
-        print(f"Erro ao conectar ao banco de dados: {e}")
-        return None
 
 def init_routes(app):
     @app.route('/') 
@@ -47,101 +35,51 @@ def init_routes(app):
 
     @app.route('/count_pacientes', methods=['GET'])
     def count_pacientes():
-        conn = get_db_connection()  
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+
+        count = get_count_pacientes()
+
+        if count is None:
+            return jsonify({"message" : "Erro ao contar todos os pacientes."}), 500
         
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM pacientes") 
-        count = cursor.fetchone()[0]  
-        cursor.close()
-        conn.close()
-        
-        return jsonify({
-            "total_pacientes": count  
-        })
+        return jsonify({"total_pacientes": count})
 
     @app.route('/count_pacientes_por_quarto', methods=['GET'])
-    def count_pacientes_por_quarto():
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+    def pacientes_por_quarto():
         
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT quartosID, COUNT(*) 
-            FROM pacientes 
-            GROUP BY quartosID
-        """)
-        dados = cursor.fetchall()
-        cursor.close()
-        conn.close()
+        dados = get_count_pacientes_por_quarto()
 
-        lista_dados = [{"quartoID": dado[0], "total_pacientes": dado[1]} for dado in dados]
-        return jsonify(lista_dados)
-
+        if dados is None:
+            return jsonify({"message" : "Erro ao contar pacientes por quarto."}), 500
+        
+        return jsonify(dados)
 
     @app.route('/consultorios', methods=['GET'])
-    def get_consultorios():
-    
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
-    
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM consultorio")
-        consultorios = cursor.fetchall()
-        cursor.close()
-        conn.close()
+    def consultorios():
 
-        consultorios_list = [
-            { "ID"   : consultorio[0],
-              "CNPJ" : consultorio[1]}
-            for consultorio in consultorios]
-    
+        consultorios_list = get_consultorios()
+
+        if consultorios_list is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        
         return jsonify(consultorios_list)
     
- 
-
     @app.route('/receitas', methods=['GET'])
     def get_receitas():
     
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
-    
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM receita")
-        receitas = cursor.fetchall()
-        cursor.close()
-        conn.close()
+        receitas = get_all_receitas()
 
-        receitas_list = [
-            { "receitaID"   : receitas[0],
-              "medicamento" : receitas[1]}
-            for receita in receitas]
+        if receitas is None:
+            return jsonify({"message" : "Erro ao buscar todas as receitas."}),500
     
-        return jsonify(receitas_list)
+        return jsonify(receitas)
     
     
     @app.route('/empregados', methods=['GET'])
     def get_empregados():
     
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
-    
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM empregados")
-        empregados = cursor.fetchall()
-        cursor.close()
-        conn.close()
-
-        empregados_list = [
-            { "empregadoID" : empregado[0],
-              "nome"        : empregado[1],
-              "CPF"         : empregado[2],
-              "tipo"        : empregado[3]}
-            for empregado in empregados]
-    
-        return jsonify(empregados_list)
+        empregados = get_all_empregados()
+        
+        if empregados is None:
+            return jsonify({"message": "Erro ao buscar todos os empregados!"}), 500
+        
+        return jsonify(empregados)
