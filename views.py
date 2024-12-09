@@ -1,4 +1,5 @@
 from flask import render_template, request, jsonify
+from models import get_all_pacientes, insert_paciente
 import mariadb
 
 def get_db_connection():
@@ -21,46 +22,27 @@ def init_routes(app):
 
     @app.route('/pacientes', methods=['GET'])
     def get_pacientes():
-        conn = get_db_connection()  
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
         
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM pacientes")
-        pacientes = cursor.fetchall()
-        cursor.close()
-        conn.close()
+        pacientes = get_all_pacientes()
         
-        pacientes_list = []
-        for paciente in pacientes:
-            pacientes_list.append({
-                "ID": paciente[0],
-                "Nome": paciente[1],
-                "Cpf": paciente[2],
-                "Restricoes": paciente[3],
-                "quartosID": paciente[4]
-            })
-        
-        return jsonify(pacientes_list)
+        if pacientes is None:
+            return jsonify({"message": "Erro ao buscar pacientes!"}), 500
+        return jsonify(pacientes)
 
     @app.route('/inserir_paciente', methods=['POST'])
     def add_paciente():
         data = request.get_json()
 
-        if not all(key in data for key in ['ID', 'Nome', 'Cpf', 'Restricoes', 'quartosID']):
-            return jsonify({"message": "Falta dados de entrada!"}), 400
+        data = request.get_json()
+        required_fields = ['ID', 'Nome', 'Cpf', 'Restricoes', 'quartosID']
         
-        conn = get_db_connection()  
-        if conn is None:
-            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+        # Validar os dados de entrada
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados de entrada!"}), 400
         
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO pacientes (ID, Nome, Cpf, Restricoes, quartosID) VALUES (%s, %s, %s, %s, %s)",
-                       (data['ID'], data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID']))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
+        success = insert_paciente(data)
+        if not success:
+            return jsonify({"message": "Erro ao inserir paciente!"}), 500
         return jsonify({"message": "Paciente inserido com sucesso!"}), 201
 
     @app.route('/count_pacientes', methods=['GET'])
