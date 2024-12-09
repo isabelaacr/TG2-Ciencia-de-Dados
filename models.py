@@ -1,20 +1,7 @@
 #onde configuro as tabelas do banco de dados models.py
 
 import mariadb
-
-# Função para obter a conexão com o banco de dados
-def get_db_connection():
-    try:
-        conn = mariadb.connect(
-            host='localhost',
-            user='root',
-            password='root',
-            database='simpleclinic'
-        )
-        return conn
-    except mariadb.Error as e:
-        print(f"Erro ao conectar ao banco de dados: {e}")
-        return None
+from db import get_db_connection
 
 # Função para buscar todos os pacientes
 def get_all_pacientes():
@@ -28,7 +15,16 @@ def get_all_pacientes():
     cursor.close()
     conn.close()
     
-    return pacientes
+    return [
+        {
+            "ID": paciente[0],
+            "Nome": paciente[1],
+            "Cpf": paciente[2],
+            "Restricoes": paciente[3],
+            "quartosID": paciente[4]
+        }
+        for paciente in pacientes
+    ]
 
 def insert_paciente(data):
     conn = get_db_connection()
