@@ -1,4 +1,7 @@
 clinicaBackendEnv/
+venv/
 __pycache__/
 *.pyc
 *.pyo
+Untitled.ipynb
+.ipynb_checkpoints/Untitled-checkpoint.ipynb
