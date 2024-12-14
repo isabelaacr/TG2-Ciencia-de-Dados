@@ -143,8 +143,13 @@ insert into consulta (ID, pacientesID, medicaID, data) values
 	(3, 3, 3, current_date),
 	(4, 4, 3, current_date);
 
-insert into receita (consultaID, pacientesID, medicaID, medicamento) values
-	(1, 1, 3, 'silencio'),
+insert into receita (consultaID, pacientesID, medicaID, medicamento, Preco) values
+	(4, 4, 3, 'ibuprofeno', 40);
+
+select * from receita r
+
+select * from consulta 
+
 	(2, 2, 3, 'tirzepatida');
 
 select * from receita natural join pacientes p where receita.pacientesID = ID
@@ -199,30 +204,37 @@ delete from consulta where ID = 1;
 
 /*adicionando colunas*/
 alter table pacientes
-add Idade int;
+add nascimento date;
 
 alter table receita
 add Preco float;
 
 /*colocando idade dos pacientes*/
-update pacientes set Idade = 24 where id = 1;
-update pacientes set Idade = 27 where id = 2;
-update pacientes set Idade = 20 where id = 3;
-update pacientes set Idade = 22 where id = 4;
+update pacientes set nascimento = '2000-05-23' where id = 1;
+update pacientes set nascimento = '1997-06-10' where id = 2;
+update pacientes set nascimento = '2002-07-12' where id = 3;
+update pacientes set nascimento = '2001-08-26' where id = 4;
 
 /*colocando preco remedio*/
 update receita set Preco = 3500 where medicamento = 'tirzepatida';
 
 
-select ID, Preco, Nome from consulta natural join pacientes p;
+/*somar todas as receitas*/
+select sum(Preco) as toatal_preco from receita r 
 
-select * from pacientes;
-select * from receita r;
-select * from consulta c;
+/*somar receitas de um unico paciente*/
+select sum(Preco) as toatal_preco from receita r where pacientesID = 2
 
+/*lista idade dos pacientes*/
+select Nome, nascimento, timestampdiff(year, nascimento, current_date()) as idade
+from pacientes;
 
+/*media idade dos pacientes*/
+SELECT avg(timestampdiff(YEAR, nascimento, current_date())) AS media_idade
+FROM pacientes;
 
-
-
+/*pacientes com medicamentos prescritos*/
+select ID, medicamento, Preco, Nome from receita r natural join pacientes p
+where pacientesID = ID;
 
 
