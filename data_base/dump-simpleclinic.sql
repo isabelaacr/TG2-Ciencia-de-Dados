@@ -27,6 +27,7 @@ CREATE TABLE `consulta` (
   `pacientesID` int(11) NOT NULL,
   `medicaID` int(11) NOT NULL,
   `data` date NOT NULL,
+  `Preco` float DEFAULT NULL,
   PRIMARY KEY (`ID`,`pacientesID`,`medicaID`),
   KEY `pacientesID` (`pacientesID`),
   KEY `medicaID` (`medicaID`),
@@ -41,7 +42,7 @@ CREATE TABLE `consulta` (
 
 LOCK TABLES `consulta` WRITE;
 /*!40000 ALTER TABLE `consulta` DISABLE KEYS */;
-INSERT INTO `consulta` VALUES (1,1,3,'2024-11-25'),(2,2,3,'2024-11-25'),(3,3,3,'2024-11-25'),(4,4,3,'2024-11-25');
+INSERT INTO `consulta` VALUES (2,2,3,'2024-11-25',NULL),(3,3,3,'2024-11-25',NULL),(4,4,3,'2024-11-25',NULL);
 /*!40000 ALTER TABLE `consulta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,7 +67,7 @@ CREATE TABLE `consultorio` (
 
 LOCK TABLES `consultorio` WRITE;
 /*!40000 ALTER TABLE `consultorio` DISABLE KEYS */;
-INSERT INTO `consultorio` VALUES (1,'12.123.123/0001-12');
+INSERT INTO `consultorio` VALUES (1,'057.421.548/0001-22');
 /*!40000 ALTER TABLE `consultorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +94,7 @@ CREATE TABLE `empregados` (
 
 LOCK TABLES `empregados` WRITE;
 /*!40000 ALTER TABLE `empregados` DISABLE KEYS */;
-INSERT INTO `empregados` VALUES (1,'lucinda silva','11111111111','enfermeira'),(2,'diamantina cruz','22222222222','enfermeira'),(3,'lagaia correia','33333333333','medica');
+INSERT INTO `empregados` VALUES (1,'lucinda rodrigues','11111111111','enfermeira'),(2,'diamantina cruz','22222222222','enfermeira'),(3,'lagaia correia','33333333333','medica');
 /*!40000 ALTER TABLE `empregados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +119,7 @@ CREATE TABLE `enfermeira` (
 
 LOCK TABLES `enfermeira` WRITE;
 /*!40000 ALTER TABLE `enfermeira` DISABLE KEYS */;
-INSERT INTO `enfermeira` VALUES (1,'123456 RS'),(2,'654321 SP');
+INSERT INTO `enfermeira` VALUES (1,'234567 RS'),(2,'654321 SP');
 /*!40000 ALTER TABLE `enfermeira` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -145,7 +146,7 @@ CREATE TABLE `lotacao` (
 
 LOCK TABLES `lotacao` WRITE;
 /*!40000 ALTER TABLE `lotacao` DISABLE KEYS */;
-INSERT INTO `lotacao` VALUES (1,1),(1,2),(1,3),(2,4),(2,5);
+INSERT INTO `lotacao` VALUES (1,1),(1,2),(1,3),(2,4);
 /*!40000 ALTER TABLE `lotacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,7 +172,7 @@ CREATE TABLE `medica` (
 
 LOCK TABLES `medica` WRITE;
 /*!40000 ALTER TABLE `medica` DISABLE KEYS */;
-INSERT INTO `medica` VALUES (3,'CRM/RS 123456','Clinico Geral');
+INSERT INTO `medica` VALUES (3,'CRM/RS 876543','Cardiologista');
 /*!40000 ALTER TABLE `medica` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,6 +189,7 @@ CREATE TABLE `pacientes` (
   `Cpf` varchar(100) DEFAULT NULL,
   `Restricoes` varchar(100) DEFAULT NULL,
   `quartosID` int(11) DEFAULT NULL,
+  `nascimento` date DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Cpf` (`Cpf`),
   KEY `quartosID` (`quartosID`),
@@ -201,7 +203,7 @@ CREATE TABLE `pacientes` (
 
 LOCK TABLES `pacientes` WRITE;
 /*!40000 ALTER TABLE `pacientes` DISABLE KEYS */;
-INSERT INTO `pacientes` VALUES (1,'arthur balejo','12312312312',NULL,1),(2,'gabriel cruz','32132132132','alergia ozempic',2),(3,'isabela costa','21321321321',NULL,3),(4,'eduardo zitske','23123123123','alergia coach',4);
+INSERT INTO `pacientes` VALUES (1,'arthur carvalho balejo','86868686886','silencio',1,'2000-05-23'),(2,'gabriel cruz','32132132132','alergia ozempic',2,'1997-06-10'),(3,'isabela costa','21321321321',NULL,3,'2002-07-12'),(4,'eduardo zitske','23123123123','alergia coach',4,'2001-08-26');
 /*!40000 ALTER TABLE `pacientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -228,7 +230,7 @@ CREATE TABLE `quartos` (
 
 LOCK TABLES `quartos` WRITE;
 /*!40000 ALTER TABLE `quartos` DISABLE KEYS */;
-INSERT INTO `quartos` VALUES (1,1,1),(2,2,1),(3,3,1),(4,4,1),(5,5,1),(6,6,1),(7,7,1),(8,8,1),(9,9,1),(10,10,1),(11,11,1),(12,12,1),(13,13,1),(14,14,1),(15,15,1),(16,16,1),(17,17,1),(18,18,1),(19,19,1),(20,21,1),(21,22,1),(22,23,1),(23,24,1),(24,24,1),(25,25,1),(26,26,1);
+INSERT INTO `quartos` VALUES (1,1,1),(2,2,1),(3,3,1),(4,4,1),(5,5,1),(6,6,1),(7,7,1),(8,8,1),(9,9,1),(10,10,1),(11,11,1),(12,22,1),(13,13,1),(14,14,1),(15,15,1),(16,16,1),(17,17,1),(18,18,1),(19,19,1),(20,21,1),(21,22,1),(22,23,1),(23,24,1),(24,24,1),(25,25,1),(26,26,1);
 /*!40000 ALTER TABLE `quartos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -244,6 +246,7 @@ CREATE TABLE `receita` (
   `pacientesID` int(11) NOT NULL,
   `medicaID` int(11) NOT NULL,
   `medicamento` varchar(100) DEFAULT NULL,
+  `Preco` float DEFAULT NULL,
   PRIMARY KEY (`consultaID`,`pacientesID`,`medicaID`),
   CONSTRAINT `receita_ibfk_1` FOREIGN KEY (`consultaID`, `pacientesID`, `medicaID`) REFERENCES `consulta` (`ID`, `pacientesID`, `medicaID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
@@ -255,7 +258,7 @@ CREATE TABLE `receita` (
 
 LOCK TABLES `receita` WRITE;
 /*!40000 ALTER TABLE `receita` DISABLE KEYS */;
-INSERT INTO `receita` VALUES (1,1,3,'silencio'),(2,2,3,'tirzepatida');
+INSERT INTO `receita` VALUES (2,2,3,'tirzepatida',3500),(4,4,3,'ibuprofeno',40);
 /*!40000 ALTER TABLE `receita` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,4 +275,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-25 16:07:29
+-- Dump completed on 2024-12-14 19:08:48
