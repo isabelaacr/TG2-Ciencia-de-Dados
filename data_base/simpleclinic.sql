@@ -131,7 +131,7 @@ insert into lotacao (enfermeiraID, quartosID) values
 insert into pacientes (ID, Nome, Cpf, Restricoes , quartosID) values
 	(1, 'arthur balejo', '12312312312', null, 1),
 	(2, 'gabriel cruz', '32132132132', 'alergia ozempic', 2),
-	(3, 'isabela acosta', '21321321321', null, 3),
+	(3, 'isabela costa', '21321321321', null, 3),
 	(4, 'eduardo zitske', '23123123123', 'alergia coach', 4);
 
 insert into pacientes (ID, Nome, Cpf, Restricoes , quartosID) values
@@ -157,17 +157,20 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
 update pacientes set Nome = 'arthur carvalho balejo' where ID = 1;
 update pacientes set Cpf = '86868686886' where ID = 1;
 update pacientes set Restricoes  = 'silencio' where ID = 1;
+
 /*delete pacientes pelo id (colocar variaveis pro front definir nos campos)*/
 delete from pacientes where id = 5;
 
 /*update medica*/
 update medica set crm = 'CRM/RS 876543' where EmpregadosID  = 3;
 update medica set especialidade  = 'Cardiologista' where EmpregadosID  = 3;
+
 /*delete medica*/
 delete from medica where EmpregadosID = 3;
 
 /*update enfermeiras*/
 update enfermeira set coren = '234567 RS' where EmpregadosID  = 1;
+
 /*delete enfermeira*/
 delete from enfermeira where EmpregadosID = 1;
 
@@ -175,34 +178,47 @@ delete from enfermeira where EmpregadosID = 1;
 update empregados set Nome = 'lucinda rodrigues' where ID = 1;
 update empregados set Cpf  = '44444444444' where ID = 1;
 update empregados set Tipo = 'faxineira' where ID = 1;
+
 /*delete empregados*/
 delete from empregados where ID = 1;
 
 /*update consultorio*/
 update consultorio set cnpj = '057.421.548/0001-22' where id = 1;
+
 /*delete consultorio*/
-/*ATENÇÂO antes de deletar o consultorio os quartos precisam ser deletados*/
-/*só dar um delete from quartos e não utilizar where*/
 delete from consultorio where id = 1;
 
-/*ATENÇÃo consulta/receita nao iremos alterar, apenas adicionar ou excluir!*/
+/*consulta/receita nao iremos alterar, apenas adicionar ou excluir!*/
 /*ATENÇÂO precisamos excluir a receita (caso ela exista) antes de apagar a conulta*/
-/*verificando a existencia da consulta*/
+/*verificando a existencia*/
 select * from receita where consultaID = 1;
 /*deletando receita dependente*/
 delete from receita where consultaID = 1 and pacientesID = 1 and medicaID = 3; 
 /*deletando consulta*/
 delete from consulta where ID = 1;
 
-/*update quarto*/
-update quartos set numero = 22 where ID = 12;
-/*delete quarto*/
-delete from quartos where id = 1;
+/*adicionando colunas*/
+alter table pacientes
+add Idade int;
 
-/*nao iremos alterar lotacao, apenas deletar e inserir*/
-delete from lotacao where enfermeiraID = 2 and quartosID = 5; 
+alter table receita
+add Preco float;
+
+/*colocando idade dos pacientes*/
+update pacientes set Idade = 24 where id = 1;
+update pacientes set Idade = 27 where id = 2;
+update pacientes set Idade = 20 where id = 3;
+update pacientes set Idade = 22 where id = 4;
+
+/*colocando preco remedio*/
+update receita set Preco = 3500 where medicamento = 'tirzepatida';
 
 
+select ID, Preco, Nome from consulta natural join pacientes p;
+
+select * from pacientes;
+select * from receita r;
+select * from consulta c;
 
 
 
