@@ -83,3 +83,42 @@ def init_routes(app):
             return jsonify({"message": "Erro ao buscar todos os empregados!"}), 500
         
         return jsonify(empregados)
+    
+
+    @app.route('/somar_receitas', methods=['GET'])
+    def somar_receitas():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("SELECT SUM(Preco) FROM receita")
+            total = cursor.fetchone()[0]
+        except mariadb.Error as e:
+            return jsonify({"message": "Erro ao calcular soma das receitas!", "error": str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+        return jsonify({"total_precos": total})
+    
+    @app.route('/paciente/<int:paciente_id>/somar_receitas', methods=['GET'])
+    def somar_receitas_paciente(paciente_id):
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("SELECT SUM(Preco) FROM receita WHERE pacientesID = ?", (paciente_id,))
+            total = cursor.fetchone()[0]
+        except mariadb.Error as e:
+            return jsonify({"message": "Erro ao calcular soma das receitas do paciente!", "error": str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+        return jsonify({"total_precos_paciente": total})
