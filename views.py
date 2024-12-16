@@ -258,3 +258,35 @@ def init_routes(app):
             return jsonify({"message": "Erro ao inserir consultório!"}), 500
 
         return jsonify({"message": "Consultório inserido com sucesso!"}), 201
+
+    @app.route('/deletar_paciente/<int:paciente_id>', methods=['DELETE'])
+    def deletar_paciente(paciente_id):
+        success = delete_paciente(paciente_id)
+        if not success:
+            return jsonify({"message": "Erro ao deletar paciente ou paciente não encontrado!"}), 404
+
+        return jsonify({"message": "Paciente deletado com sucesso!"}), 200
+
+    @app.route('/deletar_empregado/<int:empregado_id>', methods=['DELETE'])
+    def deletar_empregado(empregado_id):
+        success = delete_empregado(empregado_id)
+        if not success:
+            return jsonify({"message": "Erro ao deletar empregado ou empregado não encontrado!"}), 404
+
+        return jsonify({"message": "empregado deletado com sucesso!"}), 200
+
+    @app.route('/deletar_quarto/<int:quarto_id>', methods=['DELETE'])
+    def deletar_quarto(quarto_id):
+        success = delete_quarto(quarto_id)
+        if not success:
+            return jsonify({"message": "Erro ao deletar quarto ou quarto não encontrado!"}), 404
+
+        return jsonify({"message": "Quarto deletado com sucesso!"}), 200
+
+    @app.route('/deletar_consulta/<int:consulta_id>', methods=['DELETE'])
+    def deletar_consulta(consulta_id):
+        success = delete_consulta(consulta_id)
+        if not success:
+            return jsonify({"message": "Erro ao deletar consulta ou consulta não encontrada!"}), 404
+
+        return jsonify({"message": "Consulta deletada com sucesso!"}), 200

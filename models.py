@@ -244,4 +244,71 @@ def insert_consultorio(data):
 
     return True
 
+def delete_paciente(paciente_id):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM pacientes WHERE ID = %s", (paciente_id,))
+        conn.commit()
+        return cursor.rowcount > 0 
+    except mariadb.Error as e:
+        print(f"Erro ao deletar paciente: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def delete_empregado(empregado_id):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM empregados WHERE ID = %s", (empregado_id,))
+        conn.commit()
+        return cursor.rowcount > 0 
+    except mariadb.Error as e:
+        print(f"Erro ao deletar empregado: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def delete_quarto(quarto_id):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM quartos WHERE ID = %s", (quarto_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    except mariadb.Error as e:
+        print(f"Erro ao deletar quarto: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def delete_consulta(consulta_id):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM consulta WHERE ID = %s", (consulta_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    except mariadb.Error as e:
+        print(f"Erro ao deletar consulta: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
 
