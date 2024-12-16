@@ -2,6 +2,7 @@
 
 import mariadb
 from db import get_db_connection
+from datetime import datetime
 
 # Função para buscar todos os pacientes
 def get_all_pacientes():
@@ -159,3 +160,88 @@ def insert_empregado(data):
         conn.close()
 
     return True
+
+def insert_quarto(data):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO quartos (ID, numero, consultorioID) VALUES (%s, %s, %s)",
+            (data['ID'], data['numero'], data['consultorioID'])
+        )
+        conn.commit()
+    except mariadb.Error as e:
+        print(f"Erro ao inserir quarto: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+    return True
+
+def insert_consulta(data):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        # Garantir que a data está no formato correto (YYYY-MM-DD)
+        data_consulta = data.get('data', None)
+        if data_consulta:
+            try:
+                # Validar o formato da data
+                datetime.strptime(data_consulta, "%Y-%m-%d")
+            except ValueError:
+                print("Formato de data inválido")
+                return False
+
+        
+        preco = data['Preco'] if data['Preco'] is not None else None
+
+        
+        cursor.execute(
+            """
+            INSERT INTO simpleclinic.consulta (ID, pacientesID, medicaID, `data`, Preco) 
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (data['ID'], data['pacientesID'], data['medicaID'], data_consulta, preco)
+        )
+        conn.commit()
+    except mariadb.Error as e:
+        print(f"Erro ao inserir consulta: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+    return True
+
+def insert_consultorio(data):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO consultorio (ID, CNPJ) 
+            VALUES (%s, %s)
+            """,
+            (data['ID'], data['CNPJ'])
+        )
+        conn.commit()
+    except mariadb.Error as e:
+        print(f"Erro ao inserir consultório: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+    return True
+
+

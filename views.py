@@ -2,6 +2,7 @@ from flask import render_template, request, jsonify
 from models import *
 from db import get_db_connection
 import mariadb
+from datetime import datetime
 
 def init_routes(app):
     @app.route('/') 
@@ -208,3 +209,52 @@ def init_routes(app):
             return jsonify({"message": "Erro ao inserir empregado!"}), 500
 
         return jsonify({"message": "Empregado inserido com sucesso!"}), 201
+
+    @app.route('/inserir_quarto', methods=['POST'])
+    def add_quarto():
+        data = request.get_json()
+        required_fields = ['ID', 'numero', 'consultorioID']
+
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados de entrada!"}), 400
+
+        success = insert_quarto(data)
+        if not success:
+            return jsonify({"message": "Erro ao inserir quarto!"}), 500
+
+        return jsonify({"message": "Quarto inserido com sucesso!"}), 201
+
+    @app.route('/inserir_consulta', methods=['POST'])
+    def add_consulta():
+        data = request.get_json()
+        required_fields = ['ID', 'pacientesID', 'medicaID', 'data', 'Preco']
+
+    
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados de entrada!"}), 400
+
+        # Validar formato da data (YYYY-MM-DD)
+        try:
+            datetime.strptime(data['data'], "%Y-%m-%d")
+        except ValueError:
+            return jsonify({"message": "Formato de data inválido! Use YYYY-MM-DD."}), 400
+
+        success = insert_consulta(data)
+        if not success:
+            return jsonify({"message": "Erro ao inserir consulta!"}), 500
+
+        return jsonify({"message": "Consulta inserida com sucesso!"}), 201
+
+    @app.route('/inserir_consultorio', methods=['POST'])
+    def add_consultorio():
+        data = request.get_json()
+        required_fields = ['ID', 'CNPJ']
+    
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados de entrada!"}), 400
+
+        success = insert_consultorio(data)
+        if not success:
+            return jsonify({"message": "Erro ao inserir consultório!"}), 500
+
+        return jsonify({"message": "Consultório inserido com sucesso!"}), 201
