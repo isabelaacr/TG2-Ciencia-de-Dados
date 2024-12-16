@@ -122,3 +122,76 @@ def init_routes(app):
             conn.close()
 
         return jsonify({"total_precos_paciente": total})
+
+    @app.route('/consultas', methods=['GET'])
+    def listar_consultas():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                SELECT c.ID, c.pacientesID, p.Nome AS NomePaciente, c.medicaID, e.Nome AS NomeMedico, c.data, c.Preco
+                FROM consulta c
+                JOIN pacientes p ON c.pacientesID = p.ID
+                JOIN empregados e ON c.medicaID = e.ID
+            """)
+            consultas = cursor.fetchall()
+        except mariadb.Error as e:
+            return jsonify({"message": "Erro ao listar consultas!", "error": str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+        return jsonify([
+            {
+                "ID": consulta[0],
+                "PacienteID": consulta[1],
+                "NomePaciente": consulta[2],
+                "MedicoID": consulta[3],
+                "NomeMedico": consulta[4],
+                "Data": consulta[5],
+                "Preco": consulta[6]
+            }
+            for consulta in consultas
+        ])
+    
+
+    @app.route('/quartos', methods=['GET'])
+    def listar_quartos():
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"message": "Erro na conexão com o banco de dados!"}), 500
+
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                SELECT q.ID, q.numero, q.consultorioID, c.cnpj, 
+                    (SELECT COUNT(*) FROM pacientes p WHERE p.quartosID = q.ID) AS lotacao, 
+                    (SELECT GROUP_CONCAT(e.Nome) FROM lotacao l 
+                    JOIN enfermeira en ON l.enfermeiraID = en.EmpregadosID 
+                    JOIN empregados e ON en.EmpregadosID = e.ID 
+                    WHERE l.quartosID = q.ID) AS enfermeiraResponsavel
+                FROM quartos q
+                LEFT JOIN consultorio c ON q.consultorioID = c.ID
+            """)
+            quartos = cursor.fetchall()
+        except mariadb.Error as e:
+            return jsonify({"message": "Erro ao listar quartos!", "error": str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+        return jsonify([
+            {
+                "id": quarto[0],
+                "numero": quarto[1],
+                "idConsultorio": quarto[2],
+                "lotacao": quarto[4],
+                "enfermeiraResponsavel": quarto[5] or ""
+            }
+            for quarto in quartos
+        ])
