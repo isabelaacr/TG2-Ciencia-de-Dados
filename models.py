@@ -138,3 +138,24 @@ def get_all_empregados():
             "tipo"        : empregado[3]
         } for empregado in empregados
     ]
+
+def insert_empregado(data):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO empregados (ID, Nome, CPF, Tipo) VALUES (%s, %s, %s, %s)",
+            (data['ID'], data['Nome'], data['CPF'], data['Tipo'])
+        )
+        conn.commit()
+    except mariadb.Error as e:
+        print(f"Erro ao inserir empregado: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+    return True

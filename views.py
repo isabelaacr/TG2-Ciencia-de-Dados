@@ -158,7 +158,7 @@ def init_routes(app):
             for consulta in consultas
         ])
     
-
+    ### ARRUMAR ISSO /QUARTOS ou /RECEITAS ####
     @app.route('/quartos', methods=['GET'])
     def listar_quartos():
         conn = get_db_connection()
@@ -169,14 +169,13 @@ def init_routes(app):
 
         try:
             cursor.execute("""
-                SELECT q.ID, q.numero, q.consultorioID, c.cnpj, 
-                    (SELECT COUNT(*) FROM pacientes p WHERE p.quartosID = q.ID) AS lotacao, 
-                    (SELECT GROUP_CONCAT(e.Nome) FROM lotacao l 
+                SELECT q.ID, q.numero, q.consultorioID, 
+                   (SELECT COUNT(*) FROM pacientes p WHERE p.quartosID = q.ID) AS lotacao, 
+                   (SELECT GROUP_CONCAT(e.Nome SEPARATOR ', ') FROM lotacao l 
                     JOIN enfermeira en ON l.enfermeiraID = en.EmpregadosID 
                     JOIN empregados e ON en.EmpregadosID = e.ID 
                     WHERE l.quartosID = q.ID) AS enfermeiraResponsavel
                 FROM quartos q
-                LEFT JOIN consultorio c ON q.consultorioID = c.ID
             """)
             quartos = cursor.fetchall()
         except mariadb.Error as e:
@@ -187,11 +186,25 @@ def init_routes(app):
 
         return jsonify([
             {
-                "id": quarto[0],  # Inteiro
-                "numero": quarto[1],  # Inteiro
-                "idConsultorio": str(quarto[2]) if quarto[2] else "",  # String ou vazio
-                "lotacao": quarto[4],  # Inteiro
-                "enfermeiraResponsavel": quarto[5] or ""  # String ou vazio
+            "id": quarto[0],  # Inteiro
+            "numero": quarto[1],  # Inteiro
+            "idConsultorio": quarto[2] if quarto[2] else None,  # Inteiro ou None
+            "lotacao": quarto[3],  # Inteiro
+            "enfermeiraResponsavel": str(quarto[4] or "")  # Sempre string
             }
             for quarto in quartos
         ])
+
+    @app.route('/inserir_funcionario', methods=['POST'])
+    def add_empregado():
+        data = request.get_json()
+        required_fields = ['ID', 'Nome', 'CPF', 'Tipo']
+
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados de entrada!"}), 400
+
+        success = insert_empregado(data)
+        if not success:
+            return jsonify({"message": "Erro ao inserir empregado!"}), 500
+
+        return jsonify({"message": "Empregado inserido com sucesso!"}), 201
