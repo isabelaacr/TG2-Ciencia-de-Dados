@@ -290,3 +290,64 @@ def init_routes(app):
             return jsonify({"message": "Erro ao deletar consulta ou consulta não encontrada!"}), 404
 
         return jsonify({"message": "Consulta deletada com sucesso!"}), 200
+
+    @app.route('/editar_paciente/<int:paciente_id>', methods=['PUT'])
+    def editar_paciente(paciente_id):
+        data = request.get_json()
+        required_fields = ['Nome', 'Cpf', 'Restricoes', 'quartosID']
+
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados para atualizar o paciente!"}), 400
+
+        success = update_paciente(paciente_id, data)
+        if not success:
+            return jsonify({"message": "Erro ao atualizar paciente ou paciente não encontrado!"}), 404
+
+        return jsonify({"message": "Paciente atualizado com sucesso!"}), 200
+
+    @app.route('/editar_empregado/<int:empregado_id>', methods=['PUT'])
+    def editar_empregado(empregado_id):
+        data = request.get_json()
+        required_fields = ['nome', 'CPF', 'tipo']
+
+    
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados para atualizar o empregado!"}), 400
+
+        result = update_empregado(empregado_id, data)
+    
+        if not result["success"]:
+            return jsonify({"message": result["message"]}), 404 if "Nenhum empregado encontrado" in result["message"] else 500
+
+        return jsonify({"message": "Empregado atualizado com sucesso!"}), 200
+
+    @app.route('/editar_quarto/<int:quarto_id>', methods=['PUT'])
+    def editar_quarto(quarto_id):
+        data = request.get_json()
+        required_fields = ['numero', 'consultorioID']
+
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados para atualizar o quarto!"}), 400
+
+        result = update_quarto(quarto_id, data)
+    
+        if not result["success"]:
+            return jsonify({"message": result["message"]}), 404 if "Nenhum quarto encontrado" in result["message"] else 500
+
+        return jsonify({"message": "Quarto atualizado com sucesso!"}), 200
+
+    @app.route('/editar_consulta/<int:consulta_id>', methods=['PUT'])
+    def editar_consulta(consulta_id):
+        data = request.get_json()
+        required_fields = ['data', 'Preco']
+
+        if not all(field in data for field in required_fields):
+            return jsonify({"message": "Faltam dados para atualizar a consulta!"}), 400
+
+        result = update_consulta(consulta_id, data)
+    
+        if not result["success"]:
+            return jsonify({"message": result["message"]}), 404 if "Nenhuma consulta encontrada" in result["message"] else 500
+
+        return jsonify({"message": "Consulta atualizada com sucesso!"}), 200
+

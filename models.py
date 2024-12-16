@@ -312,3 +312,108 @@ def delete_consulta(consulta_id):
         cursor.close()
         conn.close()
 
+def update_paciente(paciente_id, data):
+    conn = get_db_connection()
+    if conn is None:
+        return False
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE pacientes 
+            SET Nome = %s, Cpf = %s, Restricoes = %s, quartosID = %s
+            WHERE ID = %s
+            """,
+            (data['Nome'], data['Cpf'], data['Restricoes'], data['quartosID'], paciente_id)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+    except mariadb.Error as e:
+        print(f"Erro ao editar paciente: {e}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_empregado(empregado_id, data):
+    conn = get_db_connection()
+    if conn is None:
+        return {"success": False, "message": "Erro na conexão com o banco de dados"}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE empregados 
+            SET nome = %s, CPF = %s, tipo = %s
+            WHERE ID = %s
+            """,
+            (data['nome'], data['CPF'], data['tipo'], empregado_id)
+        )
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "Nenhum empregado encontrado com o ID especificado"}
+        
+        return {"success": True}
+    except mariadb.Error as e:
+        print(f"Erro ao atualizar empregado: {e}")
+        return {"success": False, "message": f"Erro ao atualizar empregado: {e}"}
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_quarto(quarto_id, data):
+    conn = get_db_connection()
+    if conn is None:
+        return {"success": False, "message": "Erro na conexão com o banco de dados"}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE quartos 
+            SET numero = %s, consultorioID = %s
+            WHERE ID = %s
+            """,
+            (data['numero'], data['consultorioID'], quarto_id)
+        )
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "Nenhum quarto encontrado com o ID especificado"}
+        
+        return {"success": True}
+    except mariadb.Error as e:
+        return {"success": False, "message": f"Erro ao atualizar quarto: {e}"}
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_consulta(consulta_id, data):
+    conn = get_db_connection()
+    if conn is None:
+        return {"success": False, "message": "Erro na conexão com o banco de dados"}
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE consulta 
+            SET `data` = %s, Preco = %s
+            WHERE ID = %s
+            """,
+            (data['data'], data['Preco'], consulta_id)
+        )
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {"success": False, "message": "Nenhuma consulta encontrada com o ID especificado"}
+        
+        return {"success": True}
+    except mariadb.Error as e:
+        return {"success": False, "message": f"Erro ao atualizar consulta: {e}"}
+    finally:
+        cursor.close()
+        conn.close()
