@@ -187,11 +187,11 @@ def init_routes(app):
 
         return jsonify([
             {
-                "id": quarto[0],
-                "numero": quarto[1],
-                "idConsultorio": quarto[2],
-                "lotacao": quarto[4],
-                "enfermeiraResponsavel": quarto[5] or ""
+                "id": quarto[0],  # Inteiro
+                "numero": quarto[1],  # Inteiro
+                "idConsultorio": str(quarto[2]) if quarto[2] else "",  # String ou vazio
+                "lotacao": quarto[4],  # Inteiro
+                "enfermeiraResponsavel": quarto[5] or ""  # String ou vazio
             }
             for quarto in quartos
         ])
