@@ -159,7 +159,7 @@ def init_routes(app):
             for consulta in consultas
         ])
     
-    ### ARRUMAR ISSO /QUARTOS ou /RECEITAS ####
+  
     @app.route('/quartos', methods=['GET'])
     def listar_quartos():
         conn = get_db_connection()
