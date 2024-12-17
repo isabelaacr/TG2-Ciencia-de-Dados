@@ -134,11 +134,11 @@ def init_routes(app):
 
         try:
             cursor.execute("""
-                SELECT c.ID, c.pacientesID, p.Nome AS NomePaciente, c.medicaID, e.Nome AS NomeMedico, c.data, c.Preco
-                FROM consulta c
-                JOIN pacientes p ON c.pacientesID = p.ID
-                JOIN empregados e ON c.medicaID = e.ID
-            """)
+                    SELECT * 
+                    FROM consulta AS c
+                    INNER JOIN pacientes AS p ON c.pacientesID = p.ID
+                    INNER JOIN empregados AS e ON c.medicaID = e.ID
+                """)
             consultas = cursor.fetchall()
         except mariadb.Error as e:
             return jsonify({"message": "Erro ao listar consultas!", "error": str(e)}), 500
@@ -170,14 +170,15 @@ def init_routes(app):
 
         try:
             cursor.execute("""
-                SELECT q.ID, q.numero, q.consultorioID, 
+            SELECT q.*, 
                    (SELECT COUNT(*) FROM pacientes p WHERE p.quartosID = q.ID) AS lotacao, 
-                   (SELECT GROUP_CONCAT(e.Nome SEPARATOR ', ') FROM lotacao l 
+                   (SELECT GROUP_CONCAT(e.Nome SEPARATOR ', ') 
+                    FROM lotacao l 
                     JOIN enfermeira en ON l.enfermeiraID = en.EmpregadosID 
                     JOIN empregados e ON en.EmpregadosID = e.ID 
                     WHERE l.quartosID = q.ID) AS enfermeiraResponsavel
-                FROM quartos q
-            """)
+            FROM quartos AS q
+        """)
             quartos = cursor.fetchall()
         except mariadb.Error as e:
             return jsonify({"message": "Erro ao listar quartos!", "error": str(e)}), 500
